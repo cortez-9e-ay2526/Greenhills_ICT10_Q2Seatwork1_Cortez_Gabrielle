@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
+    <title>Creepypasta Mansion Registry</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin-top: 8%;
+        }
+
+        .mansion-card {
+            background: #0d0d0d;
+            border: 2px dashed #ff0000;
+            padding: 35px;
+            width: 420px;
+            display: inline-block;
+            box-shadow: 0px 0px 25px rgba(255, 0, 0, 0.4);
+            box-sizing: border-box;
+        }
+
+        .proxy {
+            font-size: 80px;
+            color: #ffffff;
+            display: inline-block;
+            animation: subtle-jitter 0.12s infinite;
+            text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ff0000;
+        }
+
+        h2 {
+            color: #ff1a1a;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            font-size: 1.4rem;
+        }
+
+        .input-group {
+            text-align: left;
+            width: 90%;
+            margin: 0 auto 15px auto;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #cccccc;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        input {
+            background: #121212;
+            border: 1px solid #333333;
+            color: #ffffff;
+            padding: 12px;
+            margin-top: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            font-family: inherit;
+        }
+
+        input:focus {
+            border-color: #ffffff;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        button {
+            background: #990000;
+            color: #ffffff;
+            border: 1px solid #ff0000;
+            padding: 14px;
+            cursor: pointer;
+            width: 90%;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px #ffffff;
+        }
+
+        #result {
+            margin-top: 25px;
+            font-weight: bold;
+            color: #ff3333;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            padding: 0 10px;
+            min-height: 40px;
+        }
+
+        /* Container for your slendy.png artwork */
+        #slender-container {
+            display: none;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slender-art {
+            width: 260px;
+            height: auto;
+            border: 2px dashed #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+        }
+
+        /* Ambient subtle vibration */
+        @keyframes subtle-jitter {
+            0% { transform: translate(0.5px, 0.5px); }
+            50% { transform: translate(-0.5px, -0.5px); }
+            100% { transform: translate(0.5px, -0.5px); }
+        }
+
+        /* Smooth tremor effect when name is successfully on the roster */
+        @keyframes smooth-tremor {
+            0% { transform: translate(0.5px, 0.5px); }
+            25% { transform: translate(-0.5px, -0.5px); }
+            50% { transform: translate(-1px, 0px); }
+            75% { transform: translate(0.5px, 0.5px); }
+            100% { transform: translate(0px, -0.5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mansion-card" id="card-box">
+        <div class="proxy">⦻</div>
+        
+        <h2>ICT CLUB REGISTER</h2>
+        <p style="font-size: 11px; color: #555; margin-bottom: 25px;">candidate verification</p>
+        
+        <div class="input-group">
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" placeholder="Enter first name...">
+        </div>
+        
+        <div class="input-group">
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" placeholder="Enter last name...">
+        </div>
+        
+        <br>
+        <button id="submit-btn">Are you in?</button>
+        
+        <div id="result">waiting for your input...</div>
+
+        <!-- Container for slendy.png -->
+        <div id="slender-container">
+            <p style="color: #ff1a1a; letter-spacing: 2px; font-weight: bold; margin-bottom: 12px; font-size: 0.8rem;">HE IS ALWAYS WATCHING</p>
+            <img src="slendy.png" class="slender-art" id="slender-img" alt="Slenderman Custom Drawing">
+        </div>
+    </div>
+
+    <!-- Inline script wrapper logic map -->
+    <script type="py">
+from pyscript import document
+from pyodide.ffi.wrappers import add_event_listener
+
+def view_user(event):
+    result_node = document.getElementById('result')
+    slender_box = document.getElementById('slender-container')
+    card_box = document.getElementById('card-box')
+    
+    result_node.innerHTML = ''
+    slender_box.style.display = "none"
+    slender_box.style.opacity = "0"
+    card_box.style.animation = "subtle-jitter 0.12s infinite"
+
+    first = document.getElementById('firstname').value
+    last = document.getElementById('lastname').value
+    
+    clean_first = " ".join(first.split())
+    clean_last = " ".join(last.split())
+    full_name = f"{clean_first} {clean_last}".strip()
+    
+    club_members = [
+        # Original Student Class Roster
+        "victoria rivera", "reuben lim", "antonio manalo", "juan manapat", 
+        "lucas dannug", "reign macachor", "hans ukwatte", "dan perez", 
+        "kirche segura", "chelsea coronado", "elaina daclan", "na yeon kim", 
+        "kristine manabat", "arkin cuenca", "zangief briones", "cedric visorde", 
+        "mohammad calaca", "lara estrada", "cassiopeia rigodon", "miiska eugenio", 
+        "kristine pasco", "joshua ortiz", "josua ortiz",
+
+        # Creepypasta Human Personas
+        "jeffrey woods", "liu woods", "toby rogerson", "toby rogers", "sally williams", 
+        "jack nichols", "jane arkensaw", "jane richardson", "nina hopkins", 
+        "natalie oulette", "helen otis", "tim write", "tim wright", "brian thomas", 
+        "jonathan blake", "dina clark", "benjamin lawman", "ben"
+    ]
+    
+    search_target = full_name.lower()
+    student_checker = search_target in club_members
+
+    display_message = (
+        f"Sorry {full_name}, your name is not on the list.",
+        f"Congratulations {full_name}! You are now part of the ICT club."
+    )
+    
+    result_node.innerHTML = display_message[student_checker]
+
+    display_modes = ["none", "block"]
+    slender_box.style.display = display_modes[student_checker]
+    
+    opacity_values = ["0", "1"]
+    slender_box.style.opacity = opacity_values[student_checker]
+    
+    # FIXED: im the goat
+    animation_modes = ["subtle-jitter 0.12s infinite", "smooth-tremor 0.3s infinite"]
+    card_box.style.animation = animation_modes[student_checker]
+
+add_event_listener(document.getElementById("submit-btn"), "click", view_user)
+    </script>
+
+</body>
+</html>
